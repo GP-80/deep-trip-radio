@@ -1,0 +1,14 @@
+[Unit]
+Description=ezstream radio source
+After=icecast2.service
+
+[Service]
+User=deeptripradio
+TimeoutStartSec=300
+ExecStartPre=/bin/bash -c "until [ -s /home/deeptripradio/playlist.m3u ]; do sleep 5; done"
+ExecStart=/usr/bin/ezstream -c /home/deeptripradio/ezstream.xml
+Restart=always
+RestartSec=10
+
+[Install]
+WantedBy=multi-user.target

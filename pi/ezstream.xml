@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ezstream>
+  <servers>
+    <server>
+      <hostname>localhost</hostname>
+      <port>8000</port>
+      <password>YOUR_ICECAST_PASSWORD</password>
+      <mountpoint>/live</mountpoint>
+      <format>MP3</format>
+    </server>
+  </servers>
+  <streams>
+    <stream>
+      <mountpoint>/live</mountpoint>
+      <intake>playlist</intake>
+      <server>default</server>
+      <format>MP3</format>
+      <stream_name>Deep Trip Radio</stream_name>
+      <stream_description>Psychedelic Soundscapes</stream_description>
+      <stream_genre>Psychedelic</stream_genre>
+    </stream>
+  </streams>
+  <intakes>
+    <intake>
+      <name>playlist</name>
+      <type>playlist</type>
+      <filename>/home/deeptripradio/playlist.m3u</filename>
+      <shuffle>1</shuffle>
+    </intake>
+  </intakes>
+</ezstream>

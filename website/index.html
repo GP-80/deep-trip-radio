@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Deep Trip Radio</title>
+<link rel="icon" type="image/svg+xml" href="favicon.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Outfit:wght@300;400;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/s.css">
+</head>
+<body>
+<div class="atmosphere"></div>
+<div class="orb orb-1"></div>
+<div class="orb orb-2"></div>
+<div class="orb orb-3"></div>
+<div class="grid-overlay"></div>
+<div class="container">
+<header class="header">
+<h1 class="logo">Deep Trip Radio</h1>
+<p class="tagline">Psychedelic Soundscapes</p>
+</header>
+<div class="player-card">
+<div class="status-display" id="d"><div class="status-indicator"></div><span class="status-text" id="e">Ready</span></div>
+<div class="controls"><button class="play-btn" id="b" aria-label="Play/Pause"><span class="play-icon" id="c">▶</span></button></div>
+<div class="volume-control"><button class="mute-btn" id="i" aria-label="Mute/Unmute"><span id="j">♪</span></button><input type="range" class="volume-slider" id="f" min="0" max="100" value="80" aria-label="Volume"></div>
+<div class="now-playing">
+<div class="now-playing-label">Now Playing</div>
+<div class="track-info">
+<div class="track-indicator"></div>
+<div class="track-details">
+<div class="track-title" id="g">—</div>
+<div class="track-artist" id="h">—</div>
+<div class="track-license" id="license-info" style="display:none;">
+<a href="" id="license-link" target="_blank" rel="noopener noreferrer"></a>
+</div>
+</div>
+<div class="album-cover-container" id="album-cover-container">
+<img id="album-cover" src="" alt="Album cover" style="display:none;">
+<div class="album-link-container" id="album-link-container" style="display:none;">
+<a href="" id="album-link" target="_blank" rel="noopener noreferrer">View on Ektoplazm</a>
+</div>
+</div>
+</div>
+</div>
+</div>
+<footer class="footer">
+<div class="social-links">
+<a href="https://discord.gg/t7kXkdNn" target="_blank" rel="noopener noreferrer" class="social-link" aria-label="Discord"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057a.082.082 0 0 0 .031.057 19.9 19.9 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028 14.09 14.09 0 0 0 1.226-1.994.076.076 0 0 0-.041-.106 13.107 13.107 0 0 1-1.872-.892.077.077 0 0 1-.008-.128 10.2 10.2 0 0 0 .372-.292.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127 12.299 12.299 0 0 1-1.873.892.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028 19.839 19.839 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.03zM8.02 15.33c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.956-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.956 2.418-2.157 2.418zm7.975 0c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.955-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.946 2.418-2.157 2.418z"/></svg></a>
+<a href="https://t.me/+aDE9WeKpMJ84YzQ0" target="_blank" rel="noopener noreferrer" class="social-link" aria-label="Telegram"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.697.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"/></svg></a>
+<a href="https://mastodon.social/@deep_trip_radio" target="_blank" rel="noopener noreferrer" class="social-link" aria-label="Mastodon"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M23.193 7.879c0-5.206-3.411-6.732-3.411-6.732C18.062.357 15.108.025 12.041 0h-.076c-3.068.025-6.02.357-7.74 1.147 0 0-3.411 1.526-3.411 6.732 0 1.192-.023 2.621.015 4.13.124 5.092.934 10.109 5.641 11.355 2.17.574 4.034.695 5.515.612 2.722-.15 4.25-.917 4.25-.917l-.09-1.977s-1.945.605-4.129.534c-2.165-.071-4.449-.234-4.799-2.891a5.499 5.499 0 0 1-.048-.745s2.125.52 4.817.643c1.646.075 3.19-.097 4.758-.283 3.007-.359 5.625-2.212 5.954-3.905.517-2.665.475-6.507.475-6.507zm-4.024 6.709h-2.497v-6.12c0-1.29-.543-1.944-1.628-1.944-1.2 0-1.802.776-1.802 2.312v3.349h-2.483v-3.35c0-1.536-.602-2.312-1.802-2.312-1.085 0-1.628.655-1.628 1.944v6.119H4.832v-6.32c0-1.289.328-2.313.987-3.07.68-.758 1.569-1.146 2.673-1.146 1.278 0 2.245.491 2.883 1.473l.62 1.04.62-1.04c.638-.982 1.605-1.473 2.883-1.473 1.104 0 1.993.388 2.673 1.146.658.757.986 1.781.986 3.07v6.32z"/></svg></a>
+</div>
+<p class="copyright">2026 Deep Trip Radio</p>
+</footer>
+</div>
+<audio id="a" preload="none"></audio>
+<script src="assets/howler.min.js"></script>
+<script src="assets/p.js?v=20260522"></script>
+</body>
+</html>
