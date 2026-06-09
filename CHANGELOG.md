@@ -1,5 +1,57 @@
 # Deep Trip Radio — Changelog
 
+## 2026-06-09
+
+### Website (`deep-trip-radio-JUNE2026-v1.zip`)
+
+**Routing rework — cloudflared → nginx → icecast/music_server**
+
+Previously cloudflared routed `stream.deeptripradio.net` directly to icecast `:8000`. It now routes to nginx `:8080`, which handles all endpoints:
+
+| Path | Backend |
+|---|---|
+| `/live` | icecast `:8000/live` |
+| `/status-json.xsl` | icecast `:8000/status-json.xsl` |
+| `/api/now` | music_server `:8002/now` |
+| `/api/cover` | music_server `:8002/cover` |
+| `/*` | `444` (connection closed) |
+
+This unlocks the music server as a public API endpoint without exposing it on the local network.
+
+**CORS duplicate header fix**
+
+Both icecast and `music_server.py` emit `Access-Control-Allow-Origin: *`. Without intervention, nginx stacks a second header and browsers reject the response. Added `proxy_hide_header` for all backend CORS headers in every nginx proxy location. Verified with `curl -s -D - <url> | grep -c "Access-Control-Allow-Origin"` — count must be 1 for all endpoints.
+
+**assets/p.js**
+- Now fetches `/api/now` first for rich metadata: title, artist, album, Ektoplazm link, license
+- Falls back to icecast `/status-json.xsl` for title/artist when current track is not in the music DB
+- Album cover loads from `/api/cover`; fades out/in on track change (CSS `transition: opacity`; JS sets opacity 0, waits 320 ms if cover was visible, loads new src, double-RAF to trigger transition)
+- `onerror` on cover img hides it gracefully; `currentTrackKey` prevents redundant fetches on unchanged tracks
+- `?v=20260609` version string
+
+**index.html**
+- `.album-cover-container` moved out of `.track-info` to be a flex sibling of `.now-playing-left`; cover now top-aligns with the "Now Playing" label instead of bottom-aligning with the track details
+- Long track/artist names truncate with `…` before reaching the cover image (requires `min-width:0` on all flex ancestors)
+- `?v=20260609` version string
+
+**assets/s.css**
+- `.now-playing` is now a flex row (`display:flex; align-items:flex-start; gap:14px`)
+- `.now-playing-left` added: `flex:1; min-width:0` (enables ellipsis truncation on children)
+- `.album-cover-container` base: removed `align-self:flex-end`, `margin-bottom:-4px`, `margin-left:10px`
+- Mobile: `.now-playing` collapses to column; `.now-playing-left` goes full width; cover centered below track info
+
+### Pi Stack
+
+**New files:**
+- `pi/music_server.py` — lightweight HTTP server (stdlib only, `127.0.0.1:8002`); polls icecast for current title, looks it up in `music_db.sqlite`, serves JSON metadata (`/now`) and JPEG cover art (`/cover`). Query strings stripped from paths so cache-busting params don't break routing.
+- `pi/build_music_db.py` — builds `music_db.sqlite` from KINGSTON1 (ID3 tags + cover art downscaled to 300×300 JPEG via `mutagen` + `Pillow`). Current DB: 342 albums, 2524 tracks, ~9.7 MB.
+- `pi/music-server.service` — systemd unit; `music_server.py` starts automatically on boot with `Restart=always`
+- `pi/nginx-icecast-proxy` — nginx site config (port 8080) with `proxy_hide_header` CORS pattern
+
+**Pending:** Ektoplazm scraper to populate `license` and `url` columns in `music_db.sqlite` (currently null for all 342 albums).
+
+---
+
 ## 2026-05-22
 
 ### Website (`deep-trip-radio-MAY2026-v4.zip`)

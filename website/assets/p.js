@@ -12,6 +12,14 @@ muteIcon=document.getElementById('j');
 
 const STREAM_URL='https://stream.deeptripradio.net/live';
 const METADATA_URL='https://stream.deeptripradio.net/status-json.xsl';
+const NOW_URL='https://stream.deeptripradio.net/api/now';
+const COVER_URL='https://stream.deeptripradio.net/api/cover';
+
+const coverImg=document.getElementById('album-cover');
+const albumLinkContainer=document.getElementById('album-link-container');
+const albumLink=document.getElementById('album-link');
+const licenseInfo=document.getElementById('license-info');
+const licenseLink=document.getElementById('license-link');
 
 let sound=null;
 let isPlaying=false;
@@ -24,6 +32,7 @@ let reconnectTimer=null;
 const MAX_RECONNECT=20;
 let stallCheckInterval=null;
 let lastSeekTime=-1;
+let currentTrackKey=null;
 
 function loadVolume(){
     const saved=localStorage.getItem('dtr_volume');
@@ -207,29 +216,54 @@ function setVolume(vol){
 }
 
 async function fetchMetadata(){
+    let gotRichData=false;
     try{
-        const response=await fetch(METADATA_URL,{method:'GET',mode:'cors',cache:'no-cache'});
-        if(!response.ok)return;
-
-        const data=await response.json();
-        if(data.icestats&&data.icestats.source){
-            const source=data.icestats.source;
-            let title=source.title||'Unknown Track';
-            let artist=source.artist||'';
-
-            if(!artist){
-                const parts=title.split(' - ');
-                if(parts.length>=2){
-                    artist=parts[0].trim();
-                    title=parts.slice(1).join(' - ').trim();
+        const r=await fetch(NOW_URL,{method:'GET',cache:'no-cache'});
+        if(r.ok){
+            const d=await r.json();
+            if(d.title){
+                gotRichData=true;
+                const key=(d.artist||'')+'||'+d.title;
+                trackTitle.textContent=d.title;
+                trackArtist.textContent=d.artist||'—';
+                if(key!==currentTrackKey){
+                    currentTrackKey=key;
+                    const wasVisible=coverImg.style.display!=='none';
+                    coverImg.style.opacity='0';
+                    const loadCover=()=>{
+                        coverImg.onload=()=>{
+                            coverImg.style.display='';
+                            requestAnimationFrame(()=>requestAnimationFrame(()=>{coverImg.style.opacity='1';}));
+                        };
+                        coverImg.onerror=()=>{coverImg.style.display='none';};
+                        coverImg.src=COVER_URL+'?t='+Date.now();
+                    };
+                    if(wasVisible) setTimeout(loadCover,320); else loadCover();
                 }
+                if(d.url){ albumLink.href=d.url; albumLinkContainer.style.display=''; }
+                else{ albumLinkContainer.style.display='none'; }
+                if(d.license){ licenseLink.textContent=d.license; licenseInfo.style.display=''; }
+                else{ licenseInfo.style.display='none'; }
             }
-
-            trackTitle.textContent=title;
-            trackArtist.textContent=artist||'—';
         }
-    }catch(error){
-        console.error('Metadata fetch error:',error);
+    }catch(err){ console.error('Music server error:',err); }
+    if(!gotRichData){
+        try{
+            const response=await fetch(METADATA_URL,{method:'GET',mode:'cors',cache:'no-cache'});
+            if(!response.ok)return;
+            const data=await response.json();
+            if(data.icestats&&data.icestats.source){
+                const source=data.icestats.source;
+                let title=source.title||'Unknown Track';
+                let artist=source.artist||'';
+                if(!artist){
+                    const parts=title.split(' - ');
+                    if(parts.length>=2){ artist=parts[0].trim(); title=parts.slice(1).join(' - ').trim(); }
+                }
+                trackTitle.textContent=title;
+                trackArtist.textContent=artist||'—';
+            }
+        }catch(error){ console.error('Metadata fetch error:',error); }
     }
 }
 

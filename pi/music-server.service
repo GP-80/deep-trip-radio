@@ -1,0 +1,12 @@
+[Unit]
+Description=DTR Music Server
+After=network.target
+
+[Service]
+User=deeptripradio
+ExecStart=/usr/bin/python3 /home/deeptripradio/music_server.py
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target

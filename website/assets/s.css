@@ -84,7 +84,8 @@ body{
 .volume-slider::-webkit-slider-thumb:hover{transform:scale(1.2);box-shadow:0 0 12px var(--j)}
 .volume-slider::-moz-range-thumb{width:12px;height:12px;background:var(--d);border-radius:50%;cursor:pointer;border:none;box-shadow:0 2px 8px rgba(0,0,0,.3)}
 
-.now-playing{padding-top:20px;border-top:1px solid var(--c)}
+.now-playing{display:flex;align-items:flex-start;gap:14px;padding-top:20px;border-top:1px solid var(--c)}
+.now-playing-left{flex:1;min-width:0}
 .now-playing-label{font-family:'Space Mono',monospace;font-size:.55rem;letter-spacing:.2em;text-transform:uppercase;color:var(--f);margin-bottom:10px}
 .track-info{display:flex;align-items:flex-start;gap:10px}
 .track-indicator{width:3px;height:100%;background:linear-gradient(180deg,var(--g),var(--h));border-radius:2px;flex-shrink:0;opacity:.6;margin-top:2px;min-height:32px}
@@ -95,7 +96,7 @@ body{
 .track-license a{color:var(--e);text-decoration:none;transition:color .2s ease;border-bottom:1px solid rgba(255,255,255,.15)}
 .track-license a:hover{color:var(--g);border-bottom-color:var(--g)}
 
-.album-cover-container{display:flex;flex-direction:column;align-items:center;gap:6px;margin-left:10px;flex-shrink:0;align-self:flex-end;margin-bottom:-4px}
+.album-cover-container{display:flex;flex-direction:column;align-items:center;gap:6px;flex-shrink:0}
 .album-cover-container img{width:100px;height:100px;object-fit:cover;border-radius:8px;border:1px solid var(--c);background:rgba(255,255,255,.02);box-shadow:0 4px 12px rgba(0,0,0,.3);transition:all .3s ease}
 .album-cover-container img:hover{border-color:rgba(255,255,255,.12);box-shadow:0 6px 16px rgba(0,0,0,.4),0 0 20px var(--j)}
 .album-link-container{width:100%}
@@ -141,7 +142,9 @@ body{
 .play-btn{width:60px;height:60px}
 .track-title{font-size:.95rem}
 .track-artist{font-size:.8rem}
-.album-cover-container{margin-left:0;align-self:center;margin-top:12px}
+.now-playing{flex-direction:column;align-items:center}
+.now-playing-left{width:100%}
+.album-cover-container{margin-top:12px}
 .album-cover-container img{width:180px;height:180px}
 .social-link{width:48px;height:48px}
 .social-link svg{width:20px;height:20px}
@@ -188,7 +191,6 @@ body{
 .track-title{font-size:1.1rem}
 .track-artist{font-size:.9rem}
 .track-license{font-size:.65rem}
-.album-cover-container{margin-left:12px}
 .album-cover-container img{width:140px;height:140px}
 .album-link-container a{font-size:.6rem;padding:4px 6px}
 .footer{margin-top:40px}
