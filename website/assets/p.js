@@ -228,14 +228,11 @@ async function fetchMetadata(){
                 trackArtist.textContent=d.artist||'—';
                 if(key!==currentTrackKey){
                     currentTrackKey=key;
-                    const wasVisible=coverImg.style.display!=='none';
+                    const wasVisible=coverImg.style.opacity==='1';
                     coverImg.style.opacity='0';
                     const loadCover=()=>{
-                        coverImg.onload=()=>{
-                            coverImg.style.display='';
-                            requestAnimationFrame(()=>requestAnimationFrame(()=>{coverImg.style.opacity='1';}));
-                        };
-                        coverImg.onerror=()=>{coverImg.style.display='none';};
+                        coverImg.onload=()=>{ coverImg.style.opacity='1'; };
+                        coverImg.onerror=()=>{ coverImg.style.opacity='0'; };
                         coverImg.src=COVER_URL+'?t='+Date.now();
                     };
                     if(wasVisible) setTimeout(loadCover,320); else loadCover();
@@ -248,6 +245,12 @@ async function fetchMetadata(){
         }
     }catch(err){ console.error('Music server error:',err); }
     if(!gotRichData){
+        if(currentTrackKey!==null){
+            coverImg.style.opacity='0';
+            albumLinkContainer.style.display='none';
+            licenseInfo.style.display='none';
+            currentTrackKey=null;
+        }
         try{
             const response=await fetch(METADATA_URL,{method:'GET',mode:'cors',cache:'no-cache'});
             if(!response.ok)return;
