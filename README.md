@@ -63,7 +63,7 @@ USB Drive (MP3s)
 - `ezstream.service` — systemd unit with `Restart=always`; waits for playlist to be non-empty before starting (handles USB mount delay at boot)
 - `wifi-power-save-disable.service` — disables WiFi power save mode at boot; prevents the Pi Zero W's brcmfmac chip from dozing between TCP ACKs, which caused intermittent DNS timeouts in cloudflared
 - `music_server.py` — lightweight HTTP server (stdlib only, `127.0.0.1:8002`); polls icecast for the current title, looks it up in `music_db.sqlite`, and serves JSON metadata (`/now`) and JPEG cover art (`/cover`)
-- `build_music_db.py` — one-shot script to build `music_db.sqlite` from KINGSTON1 (reads ID3 tags, downscales cover art); requires `mutagen` and `Pillow`
+- `build_music_db.py` — one-shot script to build `music_db.sqlite` from KINGSTON1 (reads ID3 tags, downscales cover art); requires `mutagen` and `Pillow`. Skips any cover image whose pixel dimensions exceed 4000×4000 (e.g. an 8100×8100 scan) to avoid exhausting Pi Zero W RAM during decode — albums are still indexed, just without a thumbnail
 - `music-server.service` — systemd unit for `music_server.py`; starts automatically on boot
 - `nginx-icecast-proxy` — nginx site config (port 8080): routes `/live` and `/status-json.xsl` to icecast, `/api/` to music_server; uses `proxy_hide_header` on all proxy locations to prevent duplicate CORS headers
 - `dtr_monitor.sh` — optional diagnostics script; runs 6 parallel monitors (stream, tunnel, WiFi, system, network, cloudflared log tail) and writes to `~/dtr_monitor_data/`

@@ -1,5 +1,36 @@
 # Deep Trip Radio — Changelog
 
+## 2026-06-10
+
+### Website
+
+**`assets/p.js` — license link fix**
+- License badge now links to the correct Creative Commons URL instead of the current page
+- `ccUrl(label)` helper derives the CC URL from the stored label (e.g. `"CC BY-NC-SA 4.0"` → `https://creativecommons.org/licenses/by-nc-sa/4.0/`) — no DB changes needed
+- `?v=20260610b` cache buster
+
+### Pi Stack
+
+**`pi/build_music_db.py` — large cover art guard**
+- Added `MAX_COVER_PIXELS = 4000 × 4000` check before decoding any cover image
+- PIL decoding a very high-resolution image (e.g. 8100×8100 px) on Pi Zero W caused silent memory exhaustion, causing the script to silently skip all subsequent albums in that genre and beyond — entire genre folders went unindexed with no error logged and exit code 0
+- Fix: `Image.open()` in lazy mode, check `img.width × img.height` before `convert('RGB')`, skip and log a warning if over the limit
+- Images over the limit are skipped (album is still indexed, just without a cover)
+
+**Music DB — previously unindexed albums recovered**
+- Two album folders had a double-nested directory structure (MP3s one level deeper than expected); flattened on disk
+- 65 albums (two complete genre folders) were missing from the DB due to the large cover art bug above; all 65 now indexed
+- DB updated: **408 albums, 3116 tracks** (previously 342 albums, 2524 tracks)
+- `patch_db.py` (local, gitignored) used to add missing albums without wiping the existing DB
+
+**Music DB — CC license and album URL population**
+- `meta_fill.py` (local, gitignored) run against the full 408-album DB
+- **385/408 albums** now have `license` (e.g. `CC BY-NC-SA 4.0`) and `url` populated
+- 23 albums remain unmatched — mostly due to non-standard characters or multi-artist slug patterns; require manual lookup (see `NOTES.local.md`)
+- `build_music_db.py` deployed to Pi with the large-image fix; `meta_fill.py` re-deployed
+
+---
+
 ## 2026-06-09
 
 ### Website (`deep-trip-radio-JUNE2026-v1.zip`)

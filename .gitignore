@@ -1,3 +1,6 @@
 dtr_monitor_data/
 *.old
 *.zip
+pi/meta_fill.py
+pi/music_db.sqlite
+NOTES.local.md

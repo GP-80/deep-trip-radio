@@ -15,6 +15,8 @@ const METADATA_URL='https://stream.deeptripradio.net/status-json.xsl';
 const NOW_URL='https://stream.deeptripradio.net/api/now';
 const COVER_URL='https://stream.deeptripradio.net/api/cover';
 
+function ccUrl(label){const m=label.match(/^CC\s+([A-Z-]+)\s+([\d.]+)$/i);return m?'https://creativecommons.org/licenses/'+m[1].toLowerCase()+'/'+m[2]+'/':'';}
+
 const coverImg=document.getElementById('album-cover');
 const albumLinkContainer=document.getElementById('album-link-container');
 const albumLink=document.getElementById('album-link');
@@ -239,7 +241,7 @@ async function fetchMetadata(){
                 }
                 if(d.url){ albumLink.href=d.url; albumLinkContainer.style.display=''; }
                 else{ albumLinkContainer.style.display='none'; }
-                if(d.license){ licenseLink.textContent=d.license; licenseInfo.style.display=''; }
+                if(d.license){ licenseLink.textContent=d.license; licenseLink.href=ccUrl(d.license); licenseInfo.style.display=''; }
                 else{ licenseInfo.style.display='none'; }
             }
         }

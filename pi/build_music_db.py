@@ -30,10 +30,16 @@ logging.basicConfig(level=logging.INFO, format='%(asctime)s %(levelname)s %(mess
 log = logging.getLogger(__name__)
 
 
+MAX_COVER_PIXELS = 4000 * 4000  # skip images that would exhaust Pi Zero W RAM
+
+
 def downscale_cover(image_path):
     """Load, downscale, and return JPEG bytes. Returns None on failure."""
     try:
         with Image.open(image_path) as img:
+            if img.width * img.height > MAX_COVER_PIXELS:
+                log.warning('Cover too large (%dx%d), skipping: %s', img.width, img.height, image_path)
+                return None
             img = img.convert('RGB')
             img.thumbnail(COVER_SIZE, Image.LANCZOS)
             buf = io.BytesIO()
