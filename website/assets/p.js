@@ -231,7 +231,7 @@ async function fetchMetadata(){
                     const wasVisible=coverImg.style.opacity==='1';
                     coverImg.style.opacity='0';
                     const loadCover=()=>{
-                        coverImg.onload=()=>{ coverImg.style.opacity='1'; };
+                        coverImg.onload=()=>{ requestAnimationFrame(()=>{ coverImg.style.opacity='1'; }); };
                         coverImg.onerror=()=>{ coverImg.style.opacity='0'; };
                         coverImg.src=COVER_URL+'?t='+Date.now();
                     };
@@ -245,12 +245,6 @@ async function fetchMetadata(){
         }
     }catch(err){ console.error('Music server error:',err); }
     if(!gotRichData){
-        if(currentTrackKey!==null){
-            coverImg.style.opacity='0';
-            albumLinkContainer.style.display='none';
-            licenseInfo.style.display='none';
-            currentTrackKey=null;
-        }
         try{
             const response=await fetch(METADATA_URL,{method:'GET',mode:'cors',cache:'no-cache'});
             if(!response.ok)return;
@@ -265,6 +259,13 @@ async function fetchMetadata(){
                 }
                 trackTitle.textContent=title;
                 trackArtist.textContent=artist||'—';
+                const icKey=(artist||'')+'||'+title;
+                if(icKey!==currentTrackKey&&currentTrackKey!==null){
+                    coverImg.style.opacity='0';
+                    albumLinkContainer.style.display='none';
+                    licenseInfo.style.display='none';
+                    currentTrackKey=null;
+                }
             }
         }catch(error){ console.error('Metadata fetch error:',error); }
     }
