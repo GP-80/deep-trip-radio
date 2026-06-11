@@ -10,7 +10,7 @@ Built as a vibe coding project with [Claude Code](https://claude.ai/code) by Ant
 
 ## The Music
 
-All music broadcast on Deep Trip Radio is sourced from [Ektoplazm](https://ektoplazm.com/) — a free music portal dedicated to psychedelic, progressive, and downtempo electronic music. All releases are licensed under **Creative Commons** and free for non-commercial use. Deep Trip Radio does not monetise its stream.
+All music broadcast on Deep Trip Radio is released under **Creative Commons** licenses and free for non-commercial use. Deep Trip Radio does not monetise its stream.
 
 ---
 
@@ -50,7 +50,7 @@ USB Drive (MP3s)
 - Built on [Howler.js](https://howlerjs.com/) with `html5: true` for live streaming
 - **Auto-reconnect** — exponential backoff (2s → 4s → 8s → 16s → 30s max, up to 20 attempts) on any stream drop
 - **Stall detection** — polls `sound.seek()` every 5s; if `currentTime` freezes while supposedly playing, forces a reconnect. Catches silent connection deaths that Howler has no native callback for
-- **Rich metadata** — polls `/api/now` every 5s for track title, artist, album cover, Ektoplazm link, and license; falls back to icecast `/status-json.xsl` for title/artist when track is not in the music DB
+- **Rich metadata** — polls `/api/now` every 5s for track title, artist, album cover, label link, and license; falls back to icecast `/status-json.xsl` for title/artist when track is not in the music DB
 - **Album cover** — fades out/in on track change; lazy-loads on first known track; `onerror` hides gracefully for unknown tracks
 - **Volume control** — slider + mute toggle, persisted in `localStorage`
 - **Keyboard shortcut** — spacebar to play/pause
