@@ -2,7 +2,7 @@
 """
 Build the DTR music database.
 
-Walks KINGSTON1, extracts ID3 tags and cover art for every album,
+Walks KINGSTON1/EKTOPLAZM, extracts ID3 tags and cover art for every album,
 downscales covers to 300x300 JPEG, and writes everything to SQLite.
 
 Run on the Pi:
@@ -20,7 +20,7 @@ import mutagen.id3
 import mutagen.mp3
 from PIL import Image
 
-MUSIC_ROOT = Path('/media/deeptripradio/KINGSTON1')
+MUSIC_ROOT = Path('/media/deeptripradio/KINGSTON1/EKTOPLAZM')
 DB_PATH    = Path('/home/deeptripradio/music_db.sqlite')
 SKIP_DIRS  = {'System Volume Information'}
 COVER_SIZE = (300, 300)

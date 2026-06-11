@@ -10,16 +10,41 @@ Endpoints:
 import json
 import sqlite3
 import threading
+import time
 import urllib.request
 from http.server import BaseHTTPRequestHandler, HTTPServer
 from pathlib import Path
 from urllib.parse import urlparse
 
-DB_PATH  = Path('/home/deeptripradio/music_db.sqlite')
-ICECAST  = 'http://localhost:8000/status-json.xsl'
-PORT     = 8002
+DB_PATH      = Path('/home/deeptripradio/music_db.sqlite')
+LISTENER_DB  = Path('/home/deeptripradio/listener_data.sqlite')
+ICECAST      = 'http://localhost:8000/status-json.xsl'
+PORT         = 8002
 
 _lock        = threading.Lock()
+_ping_lock   = threading.Lock()
+_ping_conn   = None
+
+def _get_ping_conn():
+    global _ping_conn
+    if _ping_conn is None:
+        _ping_conn = sqlite3.connect(str(LISTENER_DB), check_same_thread=False)
+        _ping_conn.executescript('''
+            CREATE TABLE IF NOT EXISTS pings (ts INTEGER, ip TEXT);
+            CREATE INDEX IF NOT EXISTS pings_ts ON pings(ts);
+        ''')
+        _ping_conn.commit()
+    return _ping_conn
+
+def _record_ping(ip):
+    if not ip or ip in ('127.0.0.1', '::1'):
+        return
+    now = int(time.time())
+    with _ping_lock:
+        conn = _get_ping_conn()
+        conn.execute('INSERT INTO pings VALUES (?,?)', (now, ip))
+        conn.execute('DELETE FROM pings WHERE ts < ?', (now - 7 * 86400,))
+        conn.commit()
 _cache_key   = None   # icecast_key currently loaded
 _cache_cover = None   # JPEG bytes
 _cache_meta  = {}     # track + album fields
@@ -95,6 +120,14 @@ class Handler(BaseHTTPRequestHandler):
             else:
                 self.send_response(404)
                 self.end_headers()
+
+        elif path == '/listener-ping':
+            ip = self.headers.get('X-Real-IP', '').strip()
+            _record_ping(ip)
+            self.send_response(204)
+            self.send_header('Access-Control-Allow-Origin', '*')
+            self.end_headers()
+            return
 
         elif path == '/now':
             with _lock:

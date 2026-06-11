@@ -14,6 +14,7 @@ const STREAM_URL='https://stream.deeptripradio.net/live';
 const METADATA_URL='https://stream.deeptripradio.net/status-json.xsl';
 const NOW_URL='https://stream.deeptripradio.net/api/now';
 const COVER_URL='https://stream.deeptripradio.net/api/cover';
+const PING_URL='https://stream.deeptripradio.net/api/listener-ping';
 
 function ccUrl(label){const m=label.match(/^CC\s+([A-Z-]+)\s+([\d.]+)$/i);return m?'https://creativecommons.org/licenses/'+m[1].toLowerCase()+'/'+m[2]+'/':'';}
 
@@ -22,6 +23,11 @@ const albumLinkContainer=document.getElementById('album-link-container');
 const albumLink=document.getElementById('album-link');
 const licenseInfo=document.getElementById('license-info');
 const licenseLink=document.getElementById('license-link');
+
+let pingInterval=null;
+function pingListener(){fetch(PING_URL,{cache:'no-cache'}).catch(()=>{});}
+function startPing(){pingListener();pingInterval=setInterval(pingListener,60000);}
+function stopPing(){if(pingInterval){clearInterval(pingInterval);pingInterval=null;}}
 
 let sound=null;
 let isPlaying=false;
@@ -139,6 +145,7 @@ function initStream(){
             setStatus('Live','live');
             startMetadataFetch();
             startStallCheck();
+            startPing();
         },
         onpause:function(){
             isPlaying=false;
@@ -147,6 +154,7 @@ function initStream(){
             setStatus('Paused','paused');
             stopMetadataFetch();
             stopStallCheck();
+            stopPing();
         },
         onstop:function(){
             isPlaying=false;
@@ -154,6 +162,7 @@ function initStream(){
             playBtn.classList.remove('playing');
             stopMetadataFetch();
             stopStallCheck();
+            stopPing();
             if(!userPaused){
                 scheduleReconnect();
             }else{
