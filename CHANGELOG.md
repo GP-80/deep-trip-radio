@@ -1,5 +1,39 @@
 # Deep Trip Radio — Changelog
 
+## 2026-06-11
+
+### Pi Stack
+
+**KINGSTON1 → EKTOPLAZM folder restructure**
+- All 12 genre folders moved from `/media/deeptripradio/KINGSTON1/<GENRE>/` into `/media/deeptripradio/KINGSTON1/EKTOPLAZM/<GENRE>/`
+- `playlist.m3u` (2324 entries) updated in place via `sed`
+- `music_db.sqlite` — `albums.folder_path` (408 rows) updated via SQL `replace()`
+- `patch_db.py`, `build_music_db.py` — `MUSIC_ROOT` updated to point to `EKTOPLAZM` subfolder
+- `url_license_backup.json` — all 322 path entries updated
+- fstab unchanged — drive still mounts at `/media/deeptripradio/KINGSTON1`
+- ~30s downtime (ezstream stopped and restarted)
+
+**`music_db.sqlite` — `label` column added**
+- New `label TEXT` column on `albums` table; all 408 existing rows backfilled with `'Ektoplazm'`
+- `build_music_db.py` and `patch_db.py` both updated to write `label` at ingest time via a `LABEL` constant — future catalogues from other labels can be ingested by running either script with a different `LABEL` value
+- `music_server.py` — `/api/now` response now includes `label`
+
+**Listener geolocation pipeline**
+- `music_server.py` — `/listener-ping` endpoint added; records client IP (from `X-Real-IP`) and timestamp to `listener_data.sqlite` on the Pi; pings pruned after 7 days
+- `pi/nginx-icecast-proxy` — `real_ip_from 127.0.0.1 / real_ip_header CF-Connecting-IP` added so nginx recovers the real visitor IP from the Cloudflare header; `proxy_set_header X-Real-IP $remote_addr` passes it to music_server; `proxy_hide_header` CORS pattern applied to `/api/` block
+
+### Website (`website-v3.zip`)
+
+**`assets/p.js` — listener ping**
+- Player pings `/api/listener-ping` immediately on play and every 60s while playing; ping stops on pause/stop
+
+**`assets/s.css` — UI refinements**
+- Now Playing label, track title, artist, and license text all increased one size step (base + all responsive breakpoints)
+- Album cover: 100×100 → 106×106px; border-radius kept at 8px
+- Player card right padding reduced ~6px; bottom padding reduced ~6px (all breakpoints)
+
+---
+
 ## 2026-06-10
 
 ### Website
