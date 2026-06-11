@@ -14,8 +14,8 @@
 - ~30s downtime (ezstream stopped and restarted)
 
 **`music_db.sqlite` — `label` column added**
-- New `label TEXT` column on `albums` table; all 408 existing rows backfilled with `'Ektoplazm'`
-- `build_music_db.py` and `patch_db.py` both updated to write `label` at ingest time via a `LABEL` constant — future catalogues from other labels can be ingested by running either script with a different `LABEL` value
+- New `label TEXT` column on `albums` table; all 408 existing rows backfilled from `MUSIC_ROOT.name`
+- `build_music_db.py` and `patch_db.py` both updated to write `label` at ingest time via a `LABEL` constant derived from the root folder name — future catalogues sit under their own root folder and get labelled automatically
 - `music_server.py` — `/api/now` response now includes `label`
 
 **Listener geolocation pipeline**
