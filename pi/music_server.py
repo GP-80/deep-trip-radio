@@ -5,7 +5,7 @@ Port 8002. Stdlib only.
 
 Endpoints:
   GET /cover  — JPEG of current album cover, or 404 if unknown
-  GET /now    — JSON: title, artist, album, genre, year, license, url
+  GET /now    — JSON: title, artist, album, genre, year, license, url, label
 """
 import json
 import sqlite3
@@ -66,7 +66,7 @@ def _lookup(key):
         conn = sqlite3.connect(DB_PATH)
         row = conn.execute('''
             SELECT t.title, t.artist, a.album, a.genre, a.year,
-                   a.license, a.url, a.cover_blob
+                   a.license, a.url, a.cover_blob, a.label
             FROM   tracks t
             JOIN   albums a ON t.album_id = a.id
             WHERE  t.icecast_key = ?
@@ -75,9 +75,9 @@ def _lookup(key):
         conn.close()
         if not row:
             return None, {}
-        title, artist, album, genre, year, lic, url, cover = row
+        title, artist, album, genre, year, lic, url, cover, label = row
         meta = dict(title=title, artist=artist, album=album,
-                    genre=genre, year=year, license=lic, url=url)
+                    genre=genre, year=year, license=lic, url=url, label=label)
         return cover, meta
     except Exception:
         return None, {}

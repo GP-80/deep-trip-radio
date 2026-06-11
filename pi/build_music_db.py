@@ -21,6 +21,7 @@ import mutagen.mp3
 from PIL import Image
 
 MUSIC_ROOT = Path('/media/deeptripradio/KINGSTON1/EKTOPLAZM')
+LABEL      = 'Ektoplazm'
 DB_PATH    = Path('/home/deeptripradio/music_db.sqlite')
 SKIP_DIRS  = {'System Volume Information'}
 COVER_SIZE = (300, 300)
@@ -90,7 +91,8 @@ def init_db(conn):
             folder_path TEXT UNIQUE,
             cover_blob  BLOB,
             license     TEXT,
-            url         TEXT
+            url         TEXT,
+            label       TEXT
         );
 
         CREATE TABLE IF NOT EXISTS tracks (
@@ -110,7 +112,7 @@ def init_db(conn):
     conn.commit()
 
 
-def process_album(conn, genre, album_dir):
+def process_album(conn, genre, album_dir, label):
     mp3s = sorted(album_dir.glob('*.mp3'))
     if not mp3s:
         return 0
@@ -158,9 +160,9 @@ def process_album(conn, genre, album_dir):
 
     # Insert album
     cur = conn.execute(
-        'INSERT OR IGNORE INTO albums (artist, album, year, genre, folder_path, cover_blob) '
-        'VALUES (?, ?, ?, ?, ?, ?)',
-        (album_artist, album_name, album_year, genre, str(album_dir), cover_blob)
+        'INSERT OR IGNORE INTO albums (artist, album, year, genre, folder_path, cover_blob, label) '
+        'VALUES (?, ?, ?, ?, ?, ?, ?)',
+        (album_artist, album_name, album_year, genre, str(album_dir), cover_blob, label)
     )
     album_id = cur.lastrowid
     if not album_id:
@@ -198,7 +200,7 @@ def main():
         for album_dir in sorted(genre_dir.iterdir()):
             if not album_dir.is_dir():
                 continue
-            n = process_album(conn, genre, album_dir)
+            n = process_album(conn, genre, album_dir, LABEL)
             if n:
                 total_albums += 1
                 total_tracks += n
