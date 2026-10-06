@@ -38,6 +38,7 @@ fi
 # Generate shuffled playlist
 echo "$(date): Generating playlist..." >> /home/deeptripradio/startup.log
 find "$MUSIC_DIR" -type f -iname "*.mp3" \
+-not -name "._*" \
 -not -path "*/BASS MUSIC/*" \
 -not -path "*/EXPERIMENTAL/*" \
 -not -path "*/FULLON/*" \

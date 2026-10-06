@@ -1,5 +1,28 @@
 # Deep Trip Radio — Changelog
 
+## 2026-10-06
+
+### Pi Stack
+
+**Recovery after power cut**
+- The power cut silently corrupted boot-partition files (`initramfs`, `kernel8.img`, `start_cd.elf`, `start_db.elf`). Same file sizes, scattered bad bytes, and chkdsk reported no errors. The Pi died just before mounting root. Restored from the rootfs reference copies (`/boot/initrd.img-*`, `/boot/vmlinuz-*`, `/usr/lib/raspi-firmware/`), which were verified against the dpkg md5sums
+- The rootfs had inode-table damage, repaired with e2fsck. No user files or services were lost
+
+**`pi/ezstream.service` — wait for NTP sync before streaming**
+- The Pi Zero W has no RTC, so `systemd-timesyncd` restores the last saved time at boot. After 3 days powered off, the clock jumped 3 days forward on NTP sync. ezstream then burst through tracks to "catch up": icecast titles changed every ~3s and browsers buffered minutes of audio
+- Added an `ExecStartPre` that waits up to 120s for `NTPSynchronized=yes`. It's non-fatal (`-` prefix), so the radio still starts without internet
+
+**blocSonic catalogue added**
+- 46 releases (473 tracks, 320 kbps, all downtempo) copied to `/media/deeptripradio/KINGSTON1/BLOCSONIC/<release>/<album>/` with `00 - Cover.jpg` and `blocsonic_downtempo.json` (per-release URL, license and genre). The PDF booklets and videos were not copied
+- `start_radio.sh` already shuffles every MP3 on the drive, so blocSonic joins the rotation automatically (~17% of tracks). Added `-not -name "._*"` so macOS AppleDouble junk files never reach the playlist
+- New `pi/add_label_db.py`: an add-only DB ingest for a label folder plus its metadata JSON. It reuses the `build_music_db.py` helpers, handles `Disc N` subfolders, backs up the DB first, and skips albums already present, so it's safe to re-run. It never wipes existing url/license data
+- `music_db.sqlite`: +49 albums (46 releases, multi-disc split per disc), all with cover, url and license, `label='blocSonic'`
+
+### Website
+
+- No code changes. blocSonic tracks use the same title/artist/license/cover display and the generic "View album" button
+- `index.html` in the repo synced with the deployed v3 (`View album`, `?v=20260611f`)
+
 ## 2026-06-11
 
 ### Pi Stack

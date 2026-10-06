@@ -6,6 +6,10 @@ After=icecast2.service
 User=deeptripradio
 TimeoutStartSec=300
 ExecStartPre=/bin/bash -c "until [ -s /home/deeptripradio/playlist.m3u ]; do sleep 5; done"
+# Pi Zero W has no RTC: boot clock is restored from the last saved time and jumps
+# forward on NTP sync, which makes ezstream burst through tracks to "catch up".
+# Wait (max 120s) for NTP sync so pacing starts from the correct time.
+ExecStartPre=-/usr/bin/timeout 120 /bin/bash -c "until [ \"$$(timedatectl show -p NTPSynchronized --value)\" = yes ]; do sleep 2; done"
 ExecStart=/usr/bin/ezstream -c /home/deeptripradio/ezstream.xml
 Restart=always
 RestartSec=10
